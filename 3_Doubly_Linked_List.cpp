@@ -13,7 +13,6 @@ private:
         int banyakNode;
 
         void hapusMemory(Memory* target){
-                langkah = 0;
 
                 if (target == nullptr) return;
 
@@ -31,17 +30,15 @@ private:
 
                 delete target;
                 banyakNode--;
-                langkah = 4;
+
         }
 
 public:
-        long long langkah;
 
         ListDoubly(){
                 head = nullptr;
                 tail = nullptr;
                 banyakNode = 0;
-                langkah = 0;
         }
 
         ListDoubly(const ListDoubly&) = delete;
@@ -58,7 +55,6 @@ public:
         }
         
         void sisipDepan(int x){
-                langkah = 0;
                 Memory* baru = new Memory;
                 baru->data = x;
                 baru->next = head;
@@ -72,11 +68,9 @@ public:
 
                 head = baru;
                 banyakNode++;
-                langkah = 4;
         }
 
         void sisipBelakang(int x){
-                langkah = 0;
                 Memory* baru = new Memory;
                 baru->data = x;
                 baru->next = nullptr;
@@ -90,7 +84,6 @@ public:
 
                 tail = baru;
                 banyakNode++;
-                langkah = 4;
         }
 
         int ambil(int i) const {
@@ -220,3 +213,98 @@ public:
                 return true;
         }
 };
+
+int gagal = 0;
+ 
+void cek(const char* nama, bool kondisi) {
+        std::cout << "  [" << (kondisi ? "LULUS" : "GAGAL") << "] " << nama << "\n";
+        if (!kondisi) gagal++;
+}
+ 
+void periksa(const ListDoubly& l, const char* label) {
+        std::cout << label << "\n";
+        std::cout << "  maju  :"; l.cetak();
+        std::cout << "  mundur:"; l.cetakMundur();
+        bool ok = l.verifikasiRantai();
+        std::cout << "  verifikasi rantai: " << (ok ? "OK" : "GAGAL") << "\n\n";
+        if (!ok) gagal++;
+}
+
+int main(){
+        std::cout << "Pengujian Sisip Depan dan Sisip Belakang (sisipDepan dan sisipBelakang)\n";
+        ListDoubly list;
+        periksa(list, "Kondisi Awal masih kosong");
+        list.sisipBelakang(10);
+        periksa(list, "Setelah sisipBelakang(10)");
+        list.sisipBelakang(20);
+        periksa(list, "Setelah sisipBelakang(20)");
+        list.sisipBelakang(30);
+        list.sisipBelakang(40);
+        periksa(list, "Setelah sisipBelakang(30), sisipBelakang(40)");
+        list.sisipDepan(5);
+        periksa(list, "Setelah sisipDepan(5)");
+        cek("ukuran() == 5", list.ukuran() == 5);
+        cek("ambil(0) == 5", list.ambil(0) == 5);
+
+        std::cout << "Pengujian Hapus depan dan Hapus nilai (hapusDepan dan hapusNilai)\n";
+        list.hapusDepan();
+        periksa(list, "Setelah hapusDepan (5 hilang)");
+        list.hapusNilai(10);
+        periksa(list, "Setelah hapusNilai(10)");
+        list.hapusNilai(20);
+        periksa(list, "Setelah hapusNilai(20)");
+        list.hapusNilai(30);
+        periksa(list, "Setelah hapusNilai(30)");
+        list.hapusNilai(40);
+        periksa(list, "Setelah hapusNilai(40)");
+        cek("ukuran() == 0", list.ukuran() == 0);
+
+        std::cout << "Hapus Satu Satunya Memory/Node\n";
+        list.sisipDepan(42);
+        periksa(list, "list berisi satu elemen [42]");
+        cek("hapusNilai(42) bernilai true", list.hapusNilai(42));
+        periksa(list, "Setelah hapusNilai(42) (kembali kosong)");
+        cek("ukuran() == 0", list.ukuran() == 0);
+
+        std::cout << "Pengujian Hapus Depan Hanya Satu Memory/Node\n";
+        list.sisipDepan(11);
+        periksa(list, "Kondisi List berisi satu elemen [11]");
+        cek("hapusDepan() dengan hanya satu elemen", list.hapusDepan());
+        periksa(list, "Setelah hapusDepan() (kembali kosong)");
+        cek("ukuran() == 0", list.ukuran() == 0);
+
+        std::cout << "Pengujian Hapus Depan pada list kosong\n";
+        periksa(list, "Kondisi masih kosong");
+        cek("hapusDepan() pada list kosong bernilai false", !list.hapusDepan());
+        periksa(list, "Setelah hapusDepan() gagal (tetap kosong)");
+
+        std::cout << "Pengujian Hapus Nilai yang tidak ada\n";
+        list.sisipDepan(15);
+        list.sisipDepan(25);
+        list.sisipDepan(35);
+        periksa(list, "list berisi 3 elemen [35, 25, 15]");
+        cek("hapusNilai(99) bernilai false", !list.hapusNilai(99));
+        periksa(list, "List tidak berubah");
+
+        std::cout << "\n Destructor (dibuat, dipakai, dihancurkan)\n";
+        {
+        ListDoubly d;
+        for (int i = 1; i <= 5; i++) d.sisipBelakang(i * 10);
+        d.sisipDepan(0);
+        periksa(d, "Isi di dalam scope");
+        d.hapusDepan();
+        d.hapusNilai(30);
+        periksa(d, "Setelah sebagian dihapus");
+        std::cout << "akhir scope: destructor dipanggil\n";
+        }
+        {
+        ListDoubly kosong;
+        }
+        std::cout << "list kosong juga berhasil dihancurkan\n";
+ 
+        std::cout << "\nRingkasan\n";
+        if (gagal == 0) std::cout << "SEMUA PENGECEKAN LULUS\n";
+        else std::cout << "JUMLAH GAGAL: " << gagal << "\n";
+        return gagal == 0 ? 0 : 1;
+}
+
