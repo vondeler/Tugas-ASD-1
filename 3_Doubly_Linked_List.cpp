@@ -11,7 +11,7 @@ class ListDoubly{
 private:
         Memory* head;
         Memory* tail;
-        int banyakNode;
+        int ukuran;
 
         void hapusMemory(Memory* target){
                 langkah = 0;
@@ -31,7 +31,7 @@ private:
                 }
 
                 delete target;
-                banyakNode--;
+                ukuran--;
                 langkah = 4;
         }
 
@@ -41,7 +41,7 @@ public:
         ListDoubly(){
                 head = nullptr;
                 tail = nullptr;
-                banyakNode = 0;
+                ukuran = 0;
                 langkah = 0;
         };
 
@@ -69,7 +69,7 @@ public:
                 }
 
                 head = baru;
-                banyakNode++;
+                ukuran++;
                 langkah = 4;
         }
 
@@ -87,7 +87,7 @@ public:
                 }
 
                 tail = baru;
-                banyakNode++;
+                ukuran++;
                 langkah = 4;
         }
 
@@ -147,7 +147,7 @@ public:
         
         
         int ukuran() const {
-                return banyakNode;
+                return ukuran;
         }
 
         void cetak() const {
@@ -160,7 +160,7 @@ public:
                         p = p->next;
                 }
 
-                std::cout << "null (n=" << banyakNode << ")\n";
+                std::cout << "null (n=" << ukuran << ")\n";
         }
 
         void cetakMundur() const {
