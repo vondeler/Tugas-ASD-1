@@ -1,5 +1,4 @@
 #include <iostream>
-#include <string>
 
 struct Memory{
         int data;
@@ -43,7 +42,10 @@ public:
                 tail = nullptr;
                 banyakNode = 0;
                 langkah = 0;
-        };
+        }
+
+        ListDoubly(const ListDoubly&) = delete;
+        ListDoubly& operator=(const ListDoubly&) = delete;
 
         ~ListDoubly(){
                 Memory* current = head;
@@ -55,10 +57,10 @@ public:
                 }
         }
         
-        void sisipDepan(int data){
+        void sisipDepan(int x){
                 langkah = 0;
                 Memory* baru = new Memory;
-                baru->data = data;
+                baru->data = x;
                 baru->next = head;
                 baru->prev = nullptr;
 
@@ -73,10 +75,10 @@ public:
                 langkah = 4;
         }
 
-        void sisipBelakang(int data){
+        void sisipBelakang(int x){
                 langkah = 0;
                 Memory* baru = new Memory;
-                baru->data = data;
+                baru->data = x;
                 baru->next = nullptr;
                 baru->prev = tail;
 
@@ -93,6 +95,10 @@ public:
 
         int ambil(int i) const {
                 Memory* p = head;
+
+                if (i < 0 || i >= banyakNode) {
+                        return -1;
+                }
 
                 for (int j = 0; j < i; j++) {
                         p = p->next;
@@ -117,7 +123,6 @@ public:
                 return -1;
         }
 
-        
         bool hapusDepan() {
                 if (head == nullptr) {
                         return false;
@@ -143,8 +148,6 @@ public:
 
                 return false;
         }
-
-        
         
         int ukuran() const {
                 return banyakNode;
@@ -174,5 +177,46 @@ public:
                 }
 
                 std::cout << "null\n";
+        }
+
+        bool verifikasiRantai() const {
+                if (banyakNode == 0) {
+                        return head == nullptr && tail == nullptr;
+                }
+                if (head == nullptr || tail == nullptr) {
+                        return false;
+                }
+                
+                if (head->prev != nullptr || tail->next != nullptr) {
+                        return false;
+                }
+
+                int hitung = 0;
+                Memory* p = head;
+                Memory* sebelumnya = nullptr;
+
+                while (p != nullptr) {
+                        if (p->prev != sebelumnya) { return false;}
+                        sebelumnya = p;
+                        p = p->next;
+                        hitung++;
+                }
+                        
+                if (sebelumnya != tail || hitung != banyakNode) {return false;}
+                        
+                hitung = 0;
+                p = tail;
+                Memory* berikutnya = nullptr;
+
+                while (p != nullptr) {
+                        if (p->next != berikutnya) {return false;}
+                        berikutnya = p;
+                        p = p->prev;
+                        hitung++;}
+
+                if (berikutnya != head || hitung != banyakNode) {
+                return false;}
+
+                return true;
         }
 };
